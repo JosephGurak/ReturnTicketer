@@ -1,5 +1,10 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 
+use std::sync::{Mutex, OnceLock};
+
+
+static GLOBAL_TICKET: OnceLock<Mutex<Vec<Ticket>>> = OnceLock::new();
+
 #[derive(Debug)]
 struct Ticket {
     ticketId: String,
@@ -17,25 +22,30 @@ impl Ticket {
             issue,
         }
     }
+    fn add_ticket(self) {
+        let add = GLOBAL_TICKET.get().unwrap();
+        let mut add_lock = add.lock().unwrap();
+        add_lock.push(self);
+        //println!("{:?}", add_lock);
+        
+    }  
 
-    
-
-    /*
-        functions to add new ticket to vector, vector of tickets displayed in a column .
-        vector can have entries removed ,
-        print button to print all the tickets in vector as a docx
-    
-     */
+   
 
 }
 
 
-
+// now look into crates for displaying with docx and also removing unwanted entries before printing
 #[tauri::command]
-fn make_ticket(ticketId: &str, deviceId: &str, location: &str, issue: &str) -> String {
-    //println!("TicketId: {}, DeviceID: {}, Location: {}, Issue: {}", ticketId,deviceId,location,issue);
-    format!("TicketId: {}, DeviceID: {}, Location: {}, Issue: {}", ticketId,deviceId,location,issue)
-    
+fn make_ticket(ticketId: &str, deviceId: &str, location: &str, issue: &str){
+    GLOBAL_TICKET.get_or_init(|| Mutex::new(Vec::new()));
+
+    let ticket = Ticket::new(ticketId.to_string(), deviceId.to_string(), location.to_string(), issue.to_string());
+    ticket.add_ticket();
+
+    let ticket_list = GLOBAL_TICKET.get().unwrap().lock().unwrap();
+    println!("{:#?}", *ticket_list); 
+   
 }
 
 

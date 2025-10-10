@@ -4,15 +4,19 @@ import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
 
 const App = () => {
-  const [ticket, setTicket] = useState("");
+  //const [ticket, setTicket] = useState("");
   const [ticketId, setticketId] = useState("");
   const [deviceId, setdeviceId] = useState("");
   const [location, setlocation] = useState("");
   const [issue, setissue] = useState("");
   
   async function makeTicket() {
-    setTicket(await invoke("make_ticket", {ticketId,deviceId,location,issue}));
+    await invoke("make_ticket", {ticketId,deviceId,location,issue});
   }
+
+  // async function makeTicket() {
+  //   setTicket(await invoke("make_ticket", {ticketId,deviceId,location,issue}));
+  // }
 
   const body = [
     <main className="container">
@@ -48,7 +52,7 @@ const App = () => {
         />
         <button type="submit">Print</button>
       </form>
-      <p>{ticket}</p>
+      
       
     </main>
   ]
