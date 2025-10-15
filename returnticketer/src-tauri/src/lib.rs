@@ -5,7 +5,7 @@ use std::sync::{Mutex, OnceLock};
 
 static GLOBAL_TICKET: OnceLock<Mutex<Vec<Ticket>>> = OnceLock::new();
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct Ticket {
     ticketId: String,
     deviceId: String,
@@ -30,8 +30,77 @@ impl Ticket {
         
     }  
 
+    fn add_ticket(&self) {
+        let add = GLOBAL_TICKET.get().unwrap();
+        let mut add_lock = add.lock().unwrap();
+        add_lock.push(self.clone());
+       // println!("Ticekts: {:?}", add_lock);
+    }
+
    
 
+}
+
+
+fn remove_ticket_by_id(id: &str) {
+    if let Some(tickets) = GLOBAL_TICKET.get() {
+        let mut lock = tickets.lock().unwrap();
+        if let Some(pos) = lock.iter().position(|ticket| ticket.id == id) {
+            lock.remove(pos);
+        }
+    }
+}
+
+fn edit_issue(id: &str, new_issue: &str) {
+    if let Some(tickets) = GLOBAL_TICKET.get() {
+        let mut lock = tickets.lock().unwrap();
+        if let Some(ticket) = lock.iter_mut().find(|t| t.id == id) {
+            ticket.issue = new_issue.to_string();
+        } else {
+            eprintln!("Ticket id: {} not found", id);
+        }
+    } else {
+        eprintln!("Could not access GLOBAL_TICKETS");
+    }
+}
+
+fn edit_device(id: &str, new_device: &str) {
+    if let Some(tickets) = GLOBAL_TICKET.get() {
+        let mut lock = tickets.lock().unwrap();
+        if let Some(ticket) = lock.iter_mut().find(|t| t.id == id) {
+            ticket.device = new_device.to_string();
+        } else {
+            eprintln!("Ticket id: {} not found", id);
+        }
+    } else {
+        eprintln!("Could not access GLOBAL_TICKETS");
+    }
+}
+
+fn edit_location(id: &str, new_location: &str) {
+    if let Some(tickets) = GLOBAL_TICKET.get() {
+        let mut lock = tickets.lock().unwrap();
+        if let Some(ticket) = lock.iter_mut().find(|t| t.id == id) {
+            ticket.location = new_location.to_string();
+        } else {
+            eprintln!("Ticket id: {} not found", id);
+        }
+    } else {
+        eprintln!("Could not access GLOBAL_TICKETS");
+    }
+}
+
+fn edit_id(id: &str, new_id: &str) {
+    if let Some(tickets) = GLOBAL_TICKET.get() {
+        let mut lock = tickets.lock().unwrap();
+        if let Some(ticket) = lock.iter_mut().find(|t| t.id == id) {
+            ticket.id = new_id.to_string();
+        } else {
+            eprintln!("Ticket id: {} not found", id);
+        }
+    } else {
+        eprintln!("Could not access GLOBAL_TICKETS");
+    }
 }
 
 
