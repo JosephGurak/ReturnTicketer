@@ -5,18 +5,18 @@ import "./App.css";
 
 const App = () => {
   //const [ticket, setTicket] = useState("");
-  const [ticketId, setticketId] = useState("");
-  const [deviceId, setdeviceId] = useState("");
+  const [id, setid] = useState("");
+  const [device, setdevice] = useState("");
   const [location, setlocation] = useState("");
   const [issue, setissue] = useState("");
   
   async function makeTicket() {
-    await invoke("make_ticket", {ticketId,deviceId,location,issue});
+    await invoke("make_ticket", {id,device,location,issue});
   }
 
-  // async function makeTicket() {
-  //   setTicket(await invoke("make_ticket", {ticketId,deviceId,location,issue}));
-  // }
+  async function create_word_docx() {
+    await invoke("create_word_docx");
+  }
 
   const body = [
     <main className="container">
@@ -32,12 +32,12 @@ const App = () => {
       >
         <input
           id="greet-input"
-          onChange={(e) => setticketId(e.currentTarget.value)}
+          onChange={(e) => setid(e.currentTarget.value)}
           placeholder="Enter Ticket Number"
         />
         <input
           id="greet-input"
-          onChange={(e) => setdeviceId(e.currentTarget.value)}
+          onChange={(e) => setdevice(e.currentTarget.value)}
           placeholder="Enter Device Id"
         />
         <input
@@ -50,9 +50,16 @@ const App = () => {
           onChange={(e) => setissue(e.currentTarget.value)}
           placeholder="Enter Issue"
         />
-        <button type="submit">Print</button>
+        <button type="submit">Add Ticket</button>
       </form>
-      
+      <form className="row"
+            onSubmit={(e) => {
+              e.preventDefault();
+              create_word_docx();
+            }}
+      >
+        <button type="submit">docx</button>
+      </form>
       
     </main>
   ]
